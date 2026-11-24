@@ -1,8 +1,11 @@
 import asyncio
 import logging
+import socket
 
+import aiohttp
 from aiogram import Bot, Dispatcher, F
-from aiogram.enums import ParseMode
+from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.exceptions import TelegramNetworkError
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from openai import APIConnectionError, APIError, RateLimitError
@@ -25,7 +28,6 @@ api_client = APIClient(
 )
 context_manager = ContextManager()
 
-bot = Bot(settings.bot_token)
 dp = Dispatcher()
 
 
@@ -75,7 +77,17 @@ async def global_error_handler(event) -> bool:
 
 
 async def main() -> None:
-    await dp.start_polling(bot)
+    connector = aiohttp.TCPConnector(family=socket.AF_INET)
+    async with aiohttp.ClientSession(connector=connector) as client_session:
+        telegram_session = AiohttpSession(client_session=client_session)
+        bot = Bot(settings.bot_token, session=telegram_session)
+
+        while True:
+            try:
+                await dp.start_polling(bot)
+            except TelegramNetworkError:
+                logger.exception("Не удалось подключиться к Telegram; повтор через 10 секунд")
+                await asyncio.sleep(10)
 
 
 if __name__ == "__main__":
