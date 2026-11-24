@@ -35,7 +35,7 @@ def load_settings() -> Settings:
             raise RuntimeError("Для API_PROVIDER=openai не задан OPENAI_API_KEY")
     elif api_provider == "genapi":
         api_key = os.getenv("GENAPI_KEY", "").strip()
-        api_base_url = os.getenv("GENAPI_BASE_URL", "https://api.gen-api.ru/v1").strip()
+        api_base_url = os.getenv("GENAPI_BASE_URL", "https://proxy.gen-api.ru/v1").strip()
         if not api_key:
             raise RuntimeError("Для API_PROVIDER=genapi не задан GENAPI_KEY")
     else:

@@ -31,14 +31,14 @@ SYSTEM_PROMPT=Ты полезный ассистент.
 BOT_TOKEN=<токен Telegram BotFather>
 API_PROVIDER=genapi
 GENAPI_KEY=<ключ GenAPI>
-GENAPI_BASE_URL=https://api.gen-api.ru/v1
+GENAPI_BASE_URL=https://proxy.gen-api.ru/v1
 MODEL_NAME=<название модели в личном кабинете GenAPI>
 TEMPERATURE=0.2
 MAX_TOKENS=100
 SYSTEM_PROMPT=Ты полезный ассистент.
 ```
 
-Не публикуйте `.env` и не помещайте ключи в Git. По умолчанию адрес GenAPI — `https://api.gen-api.ru/v1`, его можно переопределить через `GENAPI_BASE_URL`.
+Не публикуйте `.env` и не помещайте ключи в Git. Для OpenAI-формата используется `https://proxy.gen-api.ru/v1`, адрес можно переопределить через `GENAPI_BASE_URL`.
 
 Запуск:
 
