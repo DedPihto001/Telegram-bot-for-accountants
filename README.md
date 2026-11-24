@@ -80,7 +80,7 @@ py bot.py
 
 - [Сброс контекста](/project/screenshots/01-reset.png)
 - [Ответ и показ usage](/project/screenshots/02-context.png)
-- [Состояние Telegram-чата при втором прогоне](/project/screenshots/03-run2-temperature-07.png)
+- [Свежий рабочий диалог с ботом](/project/screenshots/03-fresh-working-dialog.png)
 
 Скриншоты демонстрируют успешный запуск бота, обработку `/reset` и вывод usage. Секреты Telegram и GenAPI на снимках не отображаются.
 
