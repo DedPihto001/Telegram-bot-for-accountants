@@ -21,6 +21,7 @@ api_client = APIClient(
     temperature=settings.temperature,
     max_tokens=settings.max_tokens,
     base_url=settings.api_base_url,
+    provider=settings.api_provider,
 )
 context_manager = ContextManager()
 

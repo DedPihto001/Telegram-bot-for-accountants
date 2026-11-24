@@ -15,6 +15,7 @@ Copy-Item .env.example .env
 
 ```dotenv
 BOT_TOKEN=<токен Telegram BotFather>
+API_PROVIDER=openai
 OPENAI_API_KEY=<ключ OpenAI>
 MODEL_NAME=gpt-5-mini-2025-08-07
 TEMPERATURE=0.2
@@ -22,8 +23,22 @@ MAX_TOKENS=100
 SYSTEM_PROMPT=Ты полезный ассистент.
 ```
 
-Для прокси GenAPI укажите `GENAPI_KEY` и `GENAPI_BASE_URL` вместо OpenAI-параметров.
-Не публикуйте `.env` и не помещайте ключи в Git.
+Для OpenAI оставьте `API_PROVIDER=openai` и заполните `OPENAI_API_KEY`.
+
+Для прокси GenAPI используйте OpenAI-совместимый режим:
+
+```dotenv
+BOT_TOKEN=<токен Telegram BotFather>
+API_PROVIDER=genapi
+GENAPI_KEY=<ключ GenAPI>
+GENAPI_BASE_URL=https://api.gen-api.ru/v1
+MODEL_NAME=<название модели в личном кабинете GenAPI>
+TEMPERATURE=0.2
+MAX_TOKENS=100
+SYSTEM_PROMPT=Ты полезный ассистент.
+```
+
+Не публикуйте `.env` и не помещайте ключи в Git. По умолчанию адрес GenAPI — `https://api.gen-api.ru/v1`, его можно переопределить через `GENAPI_BASE_URL`.
 
 Запуск:
 

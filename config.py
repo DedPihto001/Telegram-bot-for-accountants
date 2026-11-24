@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 class Settings:
     bot_token: str
     api_key: str
+    api_provider: str
     model_name: str
     temperature: float
     max_tokens: int
@@ -25,15 +26,20 @@ def required(name: str) -> str:
 def load_settings() -> Settings:
     load_dotenv()
 
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-    api_base_url = os.getenv("OPENAI_BASE_URL", "").strip() or None
+    api_provider = os.getenv("API_PROVIDER", "openai").strip().lower()
 
-    if not api_key:
+    if api_provider == "openai":
+        api_key = os.getenv("OPENAI_API_KEY", "").strip()
+        api_base_url = os.getenv("OPENAI_BASE_URL", "").strip() or None
+        if not api_key:
+            raise RuntimeError("Для API_PROVIDER=openai не задан OPENAI_API_KEY")
+    elif api_provider == "genapi":
         api_key = os.getenv("GENAPI_KEY", "").strip()
-        api_base_url = os.getenv("GENAPI_BASE_URL", "").strip() or api_base_url
-
-    if not api_key:
-        raise RuntimeError("Не задан OPENAI_API_KEY или GENAPI_KEY")
+        api_base_url = os.getenv("GENAPI_BASE_URL", "https://api.gen-api.ru/v1").strip()
+        if not api_key:
+            raise RuntimeError("Для API_PROVIDER=genapi не задан GENAPI_KEY")
+    else:
+        raise RuntimeError("API_PROVIDER должен иметь значение openai или genapi")
 
     try:
         temperature = float(os.getenv("TEMPERATURE", "0.2"))
@@ -49,6 +55,7 @@ def load_settings() -> Settings:
     return Settings(
         bot_token=required("BOT_TOKEN"),
         api_key=api_key,
+        api_provider=api_provider,
         model_name=required("MODEL_NAME"),
         temperature=temperature,
         max_tokens=max_tokens,

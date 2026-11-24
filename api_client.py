@@ -13,15 +13,18 @@ class APIClient:
         temperature: float,
         max_tokens: int,
         base_url: str | None = None,
+        provider: str = "openai",
     ) -> None:
         self.model_name = model_name
+        self.provider = provider
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 
     async def complete(self, messages: list[dict[str, str]]) -> tuple[str, dict[str, int] | None]:
         logger.info(
-            "LLM request: model=%s temperature=%s max_tokens=%s messages=%s",
+            "LLM request: provider=%s model=%s temperature=%s max_tokens=%s messages=%s",
+            self.provider,
             self.model_name,
             self.temperature,
             self.max_tokens,
@@ -49,10 +52,16 @@ class APIClient:
 
             usage = None
             if response.usage:
+                usage_data = response.usage
+                prompt_tokens = getattr(usage_data, "prompt_tokens", 0) or 0
+                completion_tokens = getattr(usage_data, "completion_tokens", 0) or 0
+                total_tokens = getattr(usage_data, "total_tokens", prompt_tokens + completion_tokens) or (
+                    prompt_tokens + completion_tokens
+                )
                 usage = {
-                    "input": response.usage.prompt_tokens,
-                    "output": response.usage.completion_tokens,
-                    "total": response.usage.total_tokens,
+                    "input": prompt_tokens,
+                    "output": completion_tokens,
+                    "total": total_tokens,
                 }
 
             content = response.choices[0].message.content or ""
