@@ -2,7 +2,6 @@ import asyncio
 import logging
 import socket
 
-import aiohttp
 from aiogram import Bot, Dispatcher, F
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.exceptions import TelegramNetworkError
@@ -29,6 +28,12 @@ api_client = APIClient(
 context_manager = ContextManager()
 
 dp = Dispatcher()
+
+
+class IPv4AiohttpSession(AiohttpSession):
+    def __init__(self) -> None:
+        super().__init__()
+        self._connector_init["family"] = socket.AF_INET
 
 
 @dp.message(CommandStart())
@@ -77,17 +82,14 @@ async def global_error_handler(event) -> bool:
 
 
 async def main() -> None:
-    connector = aiohttp.TCPConnector(family=socket.AF_INET)
-    async with aiohttp.ClientSession(connector=connector) as client_session:
-        telegram_session = AiohttpSession(client_session=client_session)
-        bot = Bot(settings.bot_token, session=telegram_session)
+    bot = Bot(settings.bot_token, session=IPv4AiohttpSession())
 
-        while True:
-            try:
-                await dp.start_polling(bot)
-            except TelegramNetworkError:
-                logger.exception("Не удалось подключиться к Telegram; повтор через 10 секунд")
-                await asyncio.sleep(10)
+    while True:
+        try:
+            await dp.start_polling(bot)
+        except TelegramNetworkError:
+            logger.exception("Не удалось подключиться к Telegram; повтор через 10 секунд")
+            await asyncio.sleep(10)
 
 
 if __name__ == "__main__":
